@@ -1,0 +1,58 @@
+@startuml
+'https://plantuml.com/class-diagram
+allowmixing
+
+database Redis
+database Postgres
+database Mongo
+
+class LinkEntity {
+    String ShortUrl
+    String LongUrl
+}
+
+interface LinkRepository {
+    saveLink(<i>LinkEntity</i> link): <i>void</i>
+    getLink(<i>String</i> shortLink): <i>String</i>
+}
+
+interface ILinkUsecase {
+    createLink(<i>String</i> link): <i>Link</i>
+    getLink(<i>String</i> uuid): <i>String</i>
+}
+
+class LinkUsecase implements ILinkUsecase {
+    createLink(<i>String</i> link): <i>Link</i>
+    getLink(<i>String</i> uuid): <i>String</i>
+}
+
+LinkUsecase -o LinkRepository
+
+class LinkController {
+    HandlePOST(req) - /api/v1/shorten
+    HandleGET(req) - /{uuid}
+}
+
+LinkController -o ILinkUsecase
+
+class LinkRedis implements LinkRepository {
+    saveLink(<i>LinkEntity</i> link): <i>void</i>
+    getLink(<i>String</i> shortLink): <i>String</i>
+}
+
+class LinkPostgres? implements LinkRepository {
+    saveLink(<i>LinkEntity</i> link): <i>void</i>
+    getLink(<i>String</i> shortLink): <i>String</i>
+}
+
+class LinkMongo? implements LinkRepository {
+    saveLink(<i>LinkEntity</i> link): <i>void</i>
+    getLink(<i>String</i> shortLink): <i>String</i>
+}
+
+LinkRedis --o Redis
+"LinkPostgres?" --o Postgres
+"LinkMongo?" --o Mongo
+
+
+@enduml
